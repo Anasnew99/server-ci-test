@@ -26,7 +26,7 @@ const endDB = () => {
   });
 };
 
-const prefix = process.env.NODE_ENV === "_1test" ? "test" : "";
+const prefix = "";
 const TABLE_NAME = `${prefix}_todo`;
 const initDB = async () => {
   try {
