@@ -1,0 +1,53 @@
+var mysql = require("mysql");
+const config = {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+}; // if we want to use other config for test or production, we can change this line by using process.env.NODE_ENV
+var connection = mysql.createPool(config);
+
+const query = (query = "", params = []) => {
+  return new Promise((resolve, reject) => {
+    connection.query(query, params, (err, results, fields) => {
+      if (err) reject(err);
+      resolve(results);
+    });
+  });
+};
+
+const endDB = () => {
+  return new Promise((resolve, reject) => {
+    connection.end((err) => {
+      if (err) reject(err);
+      resolve();
+    });
+  });
+};
+
+const prefix = process.env.NODE_ENV === "_1test" ? "test" : "";
+const TABLE_NAME = `${prefix}_todo`;
+const initDB = async () => {
+  try {
+    await query(
+      `CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        completed BOOLEAN NOT NULL DEFAULT false
+    )
+    `
+    );
+
+    console.log("Database initialized, Table created ", TABLE_NAME);
+  } catch (e) {
+    console.log("DB initialization failed", e);
+  }
+};
+
+module.exports = {
+  initDB,
+  TABLE_NAME,
+  query,
+  endDB,
+};
