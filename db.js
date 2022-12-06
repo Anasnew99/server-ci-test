@@ -11,18 +11,14 @@ var connection = mysql.createPool(config);
 
 const query = (query = "", params = []) => {
   return new Promise((resolve, reject) => {
-    connection.getConnection((er, c) => {
-      if (er) reject(er);
-      if (c) {
-        c.query(query, params, (error, results, fields) => {
-          c.release();
-          if (error) reject(error);
-          resolve(results);
-          if (process.env.NODE_ENV === "test") {
-            connection.end();
-            connection = mysql.createPool(config);
-          }
-        });
+    connection.query(query, params, (err, results, field) => {
+      if (err) reject(err);
+      else {
+        resolve(results);
+      }
+      if (process.env.NODE_ENV === "test") {
+        connection.end();
+        connection = mysql.createPool(config);
       }
     });
   });
