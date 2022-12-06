@@ -22,4 +22,5 @@ services:
       - DB_HOST=db
       - CI=true
     depends_on:
-      - db
+      db:
+        condition: service_healthy
