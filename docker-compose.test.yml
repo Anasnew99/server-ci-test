@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  db:
+    image: mysql
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+  test-app:
+    container_name: test-app
+    build: .
+    command: npm test
+    environment:
+      - DB_HOST=db
+      - CI=true
+    depends_on:
+      - db

@@ -1,4 +1,5 @@
 var mysql = require("mysql");
+
 const config = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -6,6 +7,8 @@ const config = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 }; // if we want to use other config for test or production, we can change this line by using process.env.NODE_ENV
+
+console.log("config", config);
 var connection = mysql.createPool(config);
 
 const query = (query = "", params = []) => {
