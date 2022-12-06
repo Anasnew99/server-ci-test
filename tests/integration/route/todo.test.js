@@ -11,6 +11,19 @@ jest.mock("../../../core/authorizer", () => {
   };
 });
 var id;
+let server;
+beforeAll((done) => {
+  server = app.listen(8080);
+  global.agent = request.agent(server);
+
+  done();
+  // Can be any port
+});
+
+afterAll(() => {
+  // console.log(server);
+  server.close();
+});
 
 // afterAll(async () => {});
 describe(endpoint, () => {
