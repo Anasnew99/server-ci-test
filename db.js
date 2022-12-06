@@ -7,15 +7,23 @@ const config = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 }; // if we want to use other config for test or production, we can change this line by using process.env.NODE_ENV
-
-console.log("config", config);
 var connection = mysql.createPool(config);
 
 const query = (query = "", params = []) => {
   return new Promise((resolve, reject) => {
-    connection.query(query, params, (err, results, fields) => {
-      if (err) reject(err);
-      resolve(results);
+    connection.getConnection((er, c) => {
+      if (er) reject(er);
+      if (c) {
+        c.query(query, params, (error, results, fields) => {
+          c.release();
+          if (error) reject(error);
+          resolve(results);
+          if (process.env.NODE_ENV === "test") {
+            connection.end();
+            connection = mysql.createPool(config);
+          }
+        });
+      }
     });
   });
 };
